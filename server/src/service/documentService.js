@@ -26,9 +26,10 @@ export async function documentUploadService(data){
                     case ".pdf":
                         console.log("PDF Parser");
                         const PDFresult = await PDFParser(source.path);
-                        parsedDocuments.push(PDFresult);
-                        const chunkPDf = await chunkDocuments(parsedDocuments);
+                        const chunkPDf = await chunkDocuments([PDFresult]);
                         console.log(chunkPDf)
+                        const embeddingsPDF = await generateVectorEmbeddings(chunkPDf);
+                        parsedDocuments.push(embeddingsPDF);
                         break;
 
                     case ".docx":
@@ -47,8 +48,6 @@ export async function documentUploadService(data){
                         console.log("VTT Parser");
                         const VTTresult = await VTTParser(source.path);
                         const chunkVTT = await chunkDocuments([VTTresult]);
-                        console.log("chunking")
-                        console.log(chunkVTT)
                         const embeddingVTT = await generateVectorEmbeddings(chunkVTT);
                         parsedDocuments.push(embeddingVTT);
                         break;
