@@ -1,9 +1,11 @@
 import { sourceIdentifier } from "../tools/bodyIdentifier.js";
+import { SRTParseR, VTTParser } from "../tools/parsers.js";
 
 export async function documentUploadService(data){
     try {
         const sources = await sourceIdentifier(data);
         console.log(sources);
+        const parsedDocuments = [];
         for(const source of sources){
             if(source.sourceType === "youtube"){
                 console.log("YouTube Processor");
@@ -33,10 +35,14 @@ export async function documentUploadService(data){
 
                     case ".vtt":
                         console.log("VTT Parser");
+                        const result = await VTTParser(source.path);
+                        parsedDocuments.push(result);
                         break;
 
                     case ".srt":
                         console.log("SRT Parser");
+                        const result = await SRTParseR(source.path);
+                        parsedDocuments.push(result);
                         break;
 
                     case ".zip":
@@ -49,7 +55,7 @@ export async function documentUploadService(data){
             }
         }
 
-        return sources;
+        return parsedDocuments;
 
     } catch (error) {
         throw error;
