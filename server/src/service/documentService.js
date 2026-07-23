@@ -28,7 +28,7 @@ export async function documentUploadService(data){
                         const PDFresult = await PDFParser(source.path);
                         parsedDocuments.push(PDFresult);
                         const chunkPDf = await chunkDocuments(parsedDocuments);
-                        
+                        console.log(chunkPDf)
                         break;
 
                     case ".docx":
@@ -45,17 +45,21 @@ export async function documentUploadService(data){
 
                     case ".vtt":
                         console.log("VTT Parser");
-                        const result = await VTTParser(source.path);
-                        parsedDocuments.push(result);
-                        const chunkVTT = await chunkDocuments(parsedDocuments);
+                        const VTTresult = await VTTParser(source.path);
+                        const chunkVTT = await chunkDocuments([VTTresult]);
                         console.log("chunking")
                         console.log(chunkVTT)
+                        const embeddingVTT = await generateVectorEmbeddings(chunkVTT);
+                        parsedDocuments.push(embeddingVTT);
                         break;
 
                     case ".srt":
                         console.log("SRT Parser");
                         const SRTresult = await SRTParser(source.path);
-                        parsedDocuments.push(SRTresult);
+                        console.log([SRTresult])
+                        const chunkSRT = await chunkDocuments([SRTresult]);
+                        const embeddingsSRT = await generateVectorEmbeddings(chunkSRT)
+                        parsedDocuments.push(embeddingsSRT);
                         break;
 
                     case ".zip":
