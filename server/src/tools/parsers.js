@@ -3,16 +3,32 @@ import { PDFParse } from "pdf-parse";
 import path from "path";
 import mammoth from "mammoth";
 import pptx2json from "pptx2json";
+import webvtt from "node-webvtt";
+import parseSRT from "parse-srt";
 
 export async function VTTParser(filePath) {
   try {
     const content = await fs.readFile(filePath, "utf8");
+    console.log("content")
+    console.log(typeof content);
+    console.log(content.slice(0, 200));
+    const result = webvtt.parse(content);
+    const subtitles = result.cues.map(cue => ({
+  start: cue.start,
+  end: cue.end,
+  text: cue.text,
+}));
+
+console.log(subtitles)
     return {
       title: path.basename(filePath),
       type: ".vtt",
       content,
+      subtitles
     };
   } catch (error) {
+      console.error(err);
+  console.error(err.stack);
     throw error;
   }
 }
@@ -20,10 +36,22 @@ export async function VTTParser(filePath) {
 export async function SRTParser(filePath) {
   try {
     const content = await fs.readFile(filePath, "utf8");
+
+    const subtitles = parseSRT(content).map((cue) => ({
+      start: cue.start,
+      end: cue.end,
+      text: cue.text.replace(/\r?\n/g, " "),
+    }));
+
+    const textContent = subtitles
+      .map((s) => `[${s.start}-${s.end}] ${s.text}`)
+      .join("\n");
+
     return {
       title: path.basename(filePath),
       type: ".srt",
-      content,
+      content: textContent,
+      subtitles,
     };
   } catch (error) {
     throw error;

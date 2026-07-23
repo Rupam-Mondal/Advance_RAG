@@ -28,8 +28,7 @@ export async function documentUploadService(data){
                         const PDFresult = await PDFParser(source.path);
                         parsedDocuments.push(PDFresult);
                         const chunkPDf = await chunkDocuments(parsedDocuments);
-                        console.log("chunking")
-                        console.log(chunkPDf)
+                        
                         break;
 
                     case ".docx":
