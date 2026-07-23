@@ -1,5 +1,5 @@
 import { sourceIdentifier } from "../tools/bodyIdentifier.js";
-import { SRTParseR, VTTParser } from "../tools/parsers.js";
+import { DOCXParser, PDFParser, PPTXParser, SRTParseR, VTTParser } from "../tools/parsers.js";
 
 export async function documentUploadService(data){
     try {
@@ -23,14 +23,20 @@ export async function documentUploadService(data){
                 switch (source.extension) {
                     case ".pdf":
                         console.log("PDF Parser");
+                        const PDFresult = await PDFParser(source.path);
+                        parsedDocuments.push(PDFresult);
                         break;
 
                     case ".docx":
                         console.log("DOCX Parser");
+                        const DOCXresult = await DOCXParser(source.path);
+                        parsedDocuments.push(DOCXresult)
                         break;
 
                     case ".pptx":
                         console.log("PPTX Parser");
+                        const PPTXresult = await PPTXParser(source.path);
+                        parsedDocuments.push(PPTXresult);
                         break;
 
                     case ".vtt":
@@ -41,8 +47,8 @@ export async function documentUploadService(data){
 
                     case ".srt":
                         console.log("SRT Parser");
-                        const result = await SRTParseR(source.path);
-                        parsedDocuments.push(result);
+                        const SRTresult = await SRTParseR(source.path);
+                        parsedDocuments.push(SRTresult);
                         break;
 
                     case ".zip":
