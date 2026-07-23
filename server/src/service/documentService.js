@@ -1,5 +1,7 @@
 import { sourceIdentifier } from "../tools/bodyIdentifier.js";
-import { DOCXParser, PDFParser, PPTXParser, SRTParseR, VTTParser } from "../tools/parsers.js";
+import { chunkDocuments } from "../tools/chukingTool.js";
+import { generateVectorEmbeddings } from "../tools/filesQdruntUploader.js";
+import { DOCXParser, PDFParser, PPTXParser,SRTParser,VTTParser } from "../tools/parsers.js";
 
 export async function documentUploadService(data){
     try {
@@ -25,6 +27,9 @@ export async function documentUploadService(data){
                         console.log("PDF Parser");
                         const PDFresult = await PDFParser(source.path);
                         parsedDocuments.push(PDFresult);
+                        const chunkPDf = await chunkDocuments(parsedDocuments);
+                        console.log("chunking")
+                        console.log(chunkPDf)
                         break;
 
                     case ".docx":
@@ -43,11 +48,14 @@ export async function documentUploadService(data){
                         console.log("VTT Parser");
                         const result = await VTTParser(source.path);
                         parsedDocuments.push(result);
+                        const chunkVTT = await chunkDocuments(parsedDocuments);
+                        console.log("chunking")
+                        console.log(chunkVTT)
                         break;
 
                     case ".srt":
                         console.log("SRT Parser");
-                        const SRTresult = await SRTParseR(source.path);
+                        const SRTresult = await SRTParser(source.path);
                         parsedDocuments.push(SRTresult);
                         break;
 
