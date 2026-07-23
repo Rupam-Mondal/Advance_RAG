@@ -27,7 +27,6 @@ export async function documentUploadService(data){
                         console.log("PDF Parser");
                         const PDFresult = await PDFParser(source.path);
                         const chunkPDf = await chunkDocuments([PDFresult]);
-                        console.log(chunkPDf)
                         const embeddingsPDF = await generateVectorEmbeddings(chunkPDf);
                         parsedDocuments.push(embeddingsPDF);
                         break;
@@ -35,13 +34,17 @@ export async function documentUploadService(data){
                     case ".docx":
                         console.log("DOCX Parser");
                         const DOCXresult = await DOCXParser(source.path);
-                        parsedDocuments.push(DOCXresult)
+                        const chunkDOCX = await chunkDocuments([DOCXresult]);
+                        const embeddingsDOCX = await generateVectorEmbeddings(chunkDOCX);
+                        parsedDocuments.push(embeddingsDOCX)
                         break;
 
                     case ".pptx":
                         console.log("PPTX Parser");
                         const PPTXresult = await PPTXParser(source.path);
-                        parsedDocuments.push(PPTXresult);
+                        const chunkPPTX = await chunkDocuments([PPTXresult]);
+                        const embeddingsPPTX = await generateVectorEmbeddings(chunkPPTX);
+                        parsedDocuments.push(embeddingsPPTX);
                         break;
 
                     case ".vtt":
@@ -55,7 +58,6 @@ export async function documentUploadService(data){
                     case ".srt":
                         console.log("SRT Parser");
                         const SRTresult = await SRTParser(source.path);
-                        console.log([SRTresult])
                         const chunkSRT = await chunkDocuments([SRTresult]);
                         const embeddingsSRT = await generateVectorEmbeddings(chunkSRT)
                         parsedDocuments.push(embeddingsSRT);

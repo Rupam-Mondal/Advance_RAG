@@ -1,6 +1,7 @@
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { randomUUID } from "crypto";
+import fs from "fs/promises";
 
 export async function generateVectorEmbeddings(data) {
   try {
