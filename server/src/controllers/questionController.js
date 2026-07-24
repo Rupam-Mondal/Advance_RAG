@@ -5,7 +5,6 @@ export async function userQuestionController(req , res){
     try {
         const prompt = req?.body?.question;
         const docID = req?.body?.docID;
-        console.log(prompt)
         const StepBackPrompt = await PromptingStepBack(prompt);
         const result = await queryService(StepBackPrompt , docID);
         return res.json({
