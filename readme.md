@@ -4,3 +4,4 @@
 - pdf-url
 - website
 - follow up questions
+- mongodb connection for better suggestions

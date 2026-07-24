@@ -5,6 +5,51 @@ import mammoth from "mammoth";
 import pptx2json from "pptx2json";
 import webvtt from "node-webvtt";
 import parseSRT from "parse-srt";
+import { YoutubeTranscript } from "youtube-transcript";
+
+function formatTime(seconds) {
+  const totalSeconds = Math.floor(seconds);
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+
+  return [hours, minutes, secs]
+    .map((v) => String(v).padStart(2, "0"))
+    .join(":");
+}
+
+export async function YTParser(url) {
+  try {
+    const transcript = await YoutubeTranscript.fetchTranscript(url);
+
+    if (!transcript || transcript.length === 0) {
+      throw new Error("Transcript not available for this video.");
+    }
+
+    const subtitles = transcript.map((item) => {
+      const start = item.offset / 1000;
+      const duration = item.duration / 1000;
+
+      return {
+        start: formatTime(start),
+        end: formatTime(start + duration),
+        text: item.text.trim(),
+      };
+    });
+
+    return {
+      title: "YouTube Video",
+      type: "youtube",
+      url,
+      content: subtitles.map((subtitle) => subtitle.text).join(" "),
+      subtitles,
+    };
+  } catch (error) {
+    throw new Error(`YT Parser: ${error.message}`);
+  }
+}
+
 
 export async function TXTParser(filePath) {
   try {
@@ -134,3 +179,5 @@ export async function PPTXParser(filePath) {
     throw error;
   }
 }
+
+

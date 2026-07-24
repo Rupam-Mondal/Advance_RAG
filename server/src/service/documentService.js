@@ -1,7 +1,7 @@
 import { sourceIdentifier } from "../tools/bodyIdentifier.js";
 import { chunkDocuments } from "../tools/chukingTool.js";
 import { generateVectorEmbeddings } from "../tools/filesQdruntUploader.js";
-import { DOCXParser, PDFParser, PPTXParser,SRTParser,TXTParser,VTTParser } from "../tools/parsers.js";
+import { DOCXParser, PDFParser, PPTXParser,SRTParser,TXTParser,VTTParser, YTParser } from "../tools/parsers.js";
 import { websiteParser } from "../tools/websiteParser.js";
 
 export async function documentUploadService(data){
@@ -12,6 +12,10 @@ export async function documentUploadService(data){
         for(const source of sources){
             if(source.sourceType === "youtube"){
                 console.log("YouTube Processor");
+                const YTresult = await YTParser(data.source);
+                const chunkYT = await chunkDocuments([YTresult]);
+                const embeddingsYT = await generateVectorEmbeddings(chunkYT);
+                parsedDocuments.push(embeddingsYT);
             }
             else if (source.sourceType === "website"){
                 console.log("Website Processor");
