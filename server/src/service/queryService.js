@@ -29,7 +29,7 @@ export async function queryService(stepbackPrompt, docID) {
     const documents = await vectorStore.similaritySearch(query, 10, {
       must: [
         {
-          key: "sourceId",
+          key: "metadata.sourceId",
           match: {
             value: docID,
           },
@@ -44,7 +44,22 @@ export async function queryService(stepbackPrompt, docID) {
     do not answer anything beyond what is not provided. try to give answer medium size. do not give answer too long
     `;
   } catch (error) {
-    console.log(error.message);
-    throw error;
+  console.error("========== FULL ERROR ==========");
+  console.dir(error, { depth: null });
+
+  console.error("Message:", error.message);
+
+  if (error.response) {
+    console.error("Status:", error.response.status);
+    console.error("Response:");
+    console.dir(error.response.data, { depth: null });
   }
+
+  if (error.cause) {
+    console.error("Cause:");
+    console.dir(error.cause, { depth: null });
+  }
+
+  throw error;
+}
 }
