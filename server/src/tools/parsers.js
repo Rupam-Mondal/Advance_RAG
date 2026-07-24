@@ -6,29 +6,42 @@ import pptx2json from "pptx2json";
 import webvtt from "node-webvtt";
 import parseSRT from "parse-srt";
 
+export async function TXTParser(filePath) {
+  try {
+    const content = await fs.readFile(filePath, "utf8");
+    return {
+      title: filePath.split(/[\\/]/).pop(),
+      type: "txt",
+      content,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function VTTParser(filePath) {
   try {
     const content = await fs.readFile(filePath, "utf8");
-    console.log("content")
+    console.log("content");
     console.log(typeof content);
     console.log(content.slice(0, 200));
     const result = webvtt.parse(content);
-    const subtitles = result.cues.map(cue => ({
-  start: cue.start,
-  end: cue.end,
-  text: cue.text,
-}));
+    const subtitles = result.cues.map((cue) => ({
+      start: cue.start,
+      end: cue.end,
+      text: cue.text,
+    }));
 
-console.log(subtitles)
+    console.log(subtitles);
     return {
       title: path.basename(filePath),
       type: ".vtt",
       content,
-      subtitles
+      subtitles,
     };
   } catch (error) {
-      console.error(err);
-  console.error(err.stack);
+    console.error(err);
+    console.error(err.stack);
     throw error;
   }
 }
