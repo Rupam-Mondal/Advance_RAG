@@ -2,6 +2,7 @@ import { sourceIdentifier } from "../tools/bodyIdentifier.js";
 import { chunkDocuments } from "../tools/chukingTool.js";
 import { generateVectorEmbeddings } from "../tools/filesQdruntUploader.js";
 import { DOCXParser, PDFParser, PPTXParser,SRTParser,TXTParser,VTTParser } from "../tools/parsers.js";
+import { websiteParser } from "../tools/websiteParser.js";
 
 export async function documentUploadService(data){
     try {
@@ -14,6 +15,10 @@ export async function documentUploadService(data){
             }
             else if (source.sourceType === "website"){
                 console.log("Website Processor");
+                const Websiteresult = await websiteParser(data.source);
+                const chunkWebsite = await chunkDocuments([Websiteresult]);
+                const embeddingsWebsite = await generateVectorEmbeddings(chunkWebsite);
+                parsedDocuments.push(embeddingsWebsite);
             }
             else if (source.sourceType === "github") {
                 console.log("GitHub Processor");
